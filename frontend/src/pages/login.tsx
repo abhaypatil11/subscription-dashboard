@@ -17,7 +17,7 @@ export default function LoginPage() {
       localStorage.setItem('token', res.data.token);
       toast.success('Login successful!');
       router.push('/dashboard');
-    } catch (err) {
+    } catch (err:any) {
       toast.error(err.response?.data?.message || 'Login failed');
     }
   };

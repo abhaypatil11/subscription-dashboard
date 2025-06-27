@@ -32,7 +32,7 @@ function EditSubscriptionPage() {
             category: sub.category,
           });
         }
-      } catch (err) {
+      } catch (err:any) {
         console.error(err);
       }
     };
@@ -45,7 +45,7 @@ function EditSubscriptionPage() {
       await API.put(`/subscriptions/${id}`, form);
       toast.success('Subscription updated successfully!');
       router.push('/dashboard');
-    } catch (err) {
+    } catch (err:any) {
       toast.error(err.response?.data?.message || 'Failed to update subscription');
       console.error(err);
     }
