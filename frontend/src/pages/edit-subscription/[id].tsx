@@ -22,7 +22,7 @@ function EditSubscriptionPage() {
     const fetchSub = async () => {
       try {
         const res = await API.get('/subscriptions');
-        const sub = res.data.find((s) => s._id === id);
+        const sub = res.data.find((s:any) => s._id === id);
         if (sub) {
           setForm({
             serviceName: sub.serviceName,
@@ -39,7 +39,7 @@ function EditSubscriptionPage() {
     fetchSub();
   }, [id]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await API.put(`/subscriptions/${id}`, form);

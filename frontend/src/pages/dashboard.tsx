@@ -100,7 +100,7 @@ function DashboardPage() {
       await API.delete(`/subscriptions/${id}`);
       setSubscriptions((subs) => subs.filter((s) => s._id !== id));
       toast.success("Subscription deleted successfully!");
-    } catch (err) {
+    } catch (err:any) {
       toast.error(
         err.response?.data?.message || "Failed to delete subscription"
       );
@@ -115,7 +115,7 @@ function DashboardPage() {
         setUpcomingRenewals(getUpcomingRenewals(res.data));
         const totalAmount = res.data.reduce((acc, sub) => acc + sub.cost, 0);
         setTotal(totalAmount);
-      } catch (error) {
+      } catch (error:any) {
         console.error("Error fetching subscriptions:", error);
       }
     };

@@ -30,7 +30,7 @@ function AddSubscriptionPage() {
 
       toast.success('Subscription added successfully!');
       router.push('/dashboard');
-    } catch (err) {
+    } catch (err:any) {
       toast.error(err.response?.data?.message || 'Failed to add subscription');
       console.error(err);
     }
