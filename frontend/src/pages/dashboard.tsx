@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import API from "../utils/api";
@@ -23,8 +22,18 @@ ChartJS.register(
   LinearScale,
   BarElement
 );
+type Subscription = {
+  _id: string;
+  serviceName: string;
+  cost: number;
+  category: string;
+  nextBillingDate: string;
+};
 
-function getUpcomingRenewals(subscriptions: any[], limit: number = 3) {
+function getUpcomingRenewals(
+  subscriptions: Subscription[],
+  limit: number = 3
+): Subscription[] {
   const today = new Date();
   return subscriptions
     .filter((sub) => new Date(sub.nextBillingDate) >= today)
@@ -36,7 +45,9 @@ function getUpcomingRenewals(subscriptions: any[], limit: number = 3) {
     .slice(0, limit);
 }
 
-function getRedundancyAlerts(subscriptions: any[]) {
+function getRedundancyAlerts(
+  subscriptions: Subscription[]
+): [string, number][] {
   const categoryCount = subscriptions.reduce(
     (acc: Record<string, number>, sub: any) => {
       acc[sub.category] = (acc[sub.category] || 0) + 1;
@@ -49,14 +60,18 @@ function getRedundancyAlerts(subscriptions: any[]) {
 
 function DashboardPage() {
   const router = useRouter();
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [upcomingRenewals, setUpcomingRenewals] = useState([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [upcomingRenewals, setUpcomingRenewals] = useState<Subscription[]>([]);
 
-  const categoryData = subscriptions.reduce((acc, sub) => {
-    acc[sub.category] = (acc[sub.category] || 0) + sub.cost;
-    return acc;
-  }, {});
+  const [total, setTotal] = useState(0);
+
+  const categoryData = subscriptions.reduce<Record<string, number>>(
+    (acc, sub) => {
+      acc[sub.category] = (acc[sub.category] || 0) + sub.cost;
+      return acc;
+    },
+    {}
+  );
 
   const spendingByCategory = {
     labels: Object.keys(categoryData),
@@ -74,14 +89,17 @@ function DashboardPage() {
     ],
   };
 
-  const monthlySpending = subscriptions.reduce((acc, sub) => {
-    const month = new Date(sub.nextBillingDate).toLocaleString("default", {
-      month: "short",
-      year: "numeric",
-    });
-    acc[month] = (acc[month] || 0) + sub.cost;
-    return acc;
-  }, {});
+  const monthlySpending = subscriptions.reduce<Record<string, number>>(
+    (acc, sub) => {
+      const month = new Date(sub.nextBillingDate).toLocaleString("default", {
+        month: "short",
+        year: "numeric",
+      });
+      acc[month] = (acc[month] || 0) + sub.cost;
+      return acc;
+    },
+    {}
+  );
 
   const spendingOverTime = {
     labels: Object.keys(monthlySpending),
@@ -100,7 +118,7 @@ function DashboardPage() {
       await API.delete(`/subscriptions/${id}`);
       setSubscriptions((subs) => subs.filter((s) => s._id !== id));
       toast.success("Subscription deleted successfully!");
-    } catch (err:any) {
+    } catch (err: any) {
       toast.error(
         err.response?.data?.message || "Failed to delete subscription"
       );
@@ -110,12 +128,13 @@ function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await API.get("/subscriptions");
-        setSubscriptions(res.data);
-        setUpcomingRenewals(getUpcomingRenewals(res.data));
-        const totalAmount = res.data.reduce((acc, sub) => acc + sub.cost, 0);
+        const res = await API.get<Subscription[]>("/subscriptions");
+        const data = res.data;
+        setSubscriptions(data);
+        setUpcomingRenewals(getUpcomingRenewals(data));
+        const totalAmount = data.reduce((acc, sub) => acc + sub.cost, 0);
         setTotal(totalAmount);
-      } catch (error:any) {
+      } catch (error: any) {
         console.error("Error fetching subscriptions:", error);
       }
     };
@@ -182,7 +201,8 @@ function DashboardPage() {
                   );
                   return (
                     <li key={sub._id}>
-                      {sub.serviceName} – {daysLeft} {daysLeft === 1 ? "day" : "days"} left
+                      {sub.serviceName} – {daysLeft}{" "}
+                      {daysLeft === 1 ? "day" : "days"} left
                     </li>
                   );
                 })
@@ -224,14 +244,21 @@ function DashboardPage() {
               </thead>
               <tbody>
                 {subscriptions.map((sub) => (
-                  <tr key={sub._id} className="border-b border-gray-700 hover:bg-gray-700/30">
+                  <tr
+                    key={sub._id}
+                    className="border-b border-gray-700 hover:bg-gray-700/30"
+                  >
                     <td className="py-2">{sub.serviceName}</td>
                     <td>₹{sub.cost}</td>
                     <td>{sub.category}</td>
-                    <td>{new Date(sub.nextBillingDate).toLocaleDateString()}</td>
+                    <td>
+                      {new Date(sub.nextBillingDate).toLocaleDateString()}
+                    </td>
                     <td>
                       <button
-                        onClick={() => router.push(`/edit-subscription/${sub._id}`)}
+                        onClick={() =>
+                          router.push(`/edit-subscription/${sub._id}`)
+                        }
                         className="text-indigo-400 hover:underline mr-2"
                       >
                         Edit
