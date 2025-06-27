@@ -6,7 +6,7 @@ A full-stack web application to manage and visualize all your recurring subscrip
 
 **Frontend (Vercel)**: [View Dashboard](https://subscription-dashboard-4rza-csriryd8p-abhays-projects-c16af239.vercel.app)
 
-> ⚠️ Replace the above link with your actual deployed Vercel URL.
+
 
 ---
 
