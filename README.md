@@ -4,7 +4,7 @@ A full-stack web application to manage and visualize all your recurring subscrip
 
 ## 🔗 Live Demo
 
-**Frontend (Vercel)**: [View Dashboard](https://subscription-dashboard-4rza-csriryd8p-abhays-projects-c16af239.vercel.app)
+**Frontend (Vercel)**: [View Dashboard](https://subscription-dashboard-4rza-3ccs9h1k6-abhays-projects-c16af239.vercel.app/)
 
 
 
