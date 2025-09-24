@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+
 const authRoutes = require('./routes/auth');
 const subscriptionRoutes = require('./routes/subscription');
 
